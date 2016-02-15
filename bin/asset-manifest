@@ -1,0 +1,38 @@
+#!/usr/bin/env ruby
+
+require "optparse"
+require "json"
+require "digest/sha1"
+require "digest/sha2"
+require "fileutils"
+require "asset_manifest"
+
+options = {}
+OptionParser.new do |o|
+  o.banner = "Usage: #{File.basename($0)} [options] asset..."
+
+  o.on("-d", "--directory DIR", "Public directory") do |dir|
+    options[:dir] = dir
+  end
+end.parse!(ARGV)
+
+manifest = Hash.new { |h,k| h[k] = {} }
+
+ARGV.each do |path|
+  key = path.sub(/^#{Regexp.escape(options[:dir])}/, "")
+
+  body = File.read(path)
+  manifest[key][:integrity] = "sha256-" + Array(Digest::SHA256.digest(body)).pack("m0")
+  manifest[key][:checksum] = Digest::SHA1.hexdigest(body)
+
+  asset = AssetManifest::Asset.new(path.sub(".min.", "."), {
+    manifest: manifest,
+    minify: path.include?(".min."),
+    integrity: manifest[key][:integrity],
+    checksum: manifest[key][:checksum],
+  })
+
+  FileUtils.cp(File.join(Dir.pwd, path), asset.path)
+end
+
+puts JSON.dump(manifest)
