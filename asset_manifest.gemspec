@@ -21,4 +21,5 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "cutest", "~> 1.2"
   s.add_development_dependency "rack", "~> 2.5"
+  s.add_development_dependency "nokogiri", "~> 1.6"
 end
