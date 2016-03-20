@@ -1,0 +1,23 @@
+ASSETS = [
+  "public/css/app.css",
+  "public/js/app.js",
+]
+
+task :default => ["public", *ASSETS, "public/manifest.json"]
+
+task :clean do
+  rm_rf "public"
+end
+
+rule "public/manifest.json" => ASSETS do |t|
+  sh "asset-manifest -d public #{t.prerequisites.join(" ")} > #{t.name}"
+end
+
+ASSETS.each do |asset|
+  file asset => asset.sub("public", "assets") do |t|
+    mkdir_p File.dirname(t.name)
+    cp t.source, t.name
+  end
+end
+
+directory "public"

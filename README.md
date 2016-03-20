@@ -14,7 +14,7 @@ Asset Manifest provides two main utilities:
 * A ruby library to generate the proper links to the assets taking into account
   the data from your manifest.
 
-## Usage:
+## Usage
 
 Somewhere in your makefile, you'll want to generate the `public/manifest.json`
 file like so:
@@ -60,6 +60,24 @@ This would produce output similar to:
 ```
 
 (Whitespace added for clarity)
+
+### With Rake instead of Make
+
+Assuming you have an `ASSETS` constant with the list of assets, you can use the
+following example in your `Rakefile` to re-generate your manifest when your
+assets change.
+
+``` Rakefile
+rule "public/manifest.json" => ASSETS do |t|
+  sh "asset-manifest -d public #{t.prerequisites.join(" ")} > #{t.name}"
+end
+
+task assets: ASSETS
+task assets: "public/manifest.json"
+```
+
+You can add this file to your `assets` so that the file is automatically
+generated when your source assets change.
 
 ## Cuba plugin
 
