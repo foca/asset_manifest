@@ -67,7 +67,7 @@ Assuming you have an `ASSETS` constant with the list of assets, you can use the
 following example in your `Rakefile` to re-generate your manifest when your
 assets change.
 
-``` Rakefile
+``` rake
 rule "public/manifest.json" => ASSETS do |t|
   sh "asset-manifest -d public #{t.prerequisites.join(" ")} > #{t.name}"
 end
