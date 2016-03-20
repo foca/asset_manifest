@@ -26,7 +26,7 @@ ARGV.each do |path|
   manifest[key][:checksum] = Digest::SHA1.hexdigest(body)
 
   asset = AssetManifest::Asset.new(path.sub(".min.", "."), {
-    manifest: manifest,
+    manifest: manifest.dup,
     minify: path.include?(".min."),
     integrity: manifest[key][:integrity],
     checksum: manifest[key][:checksum],
