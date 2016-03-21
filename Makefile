@@ -20,6 +20,7 @@ clean:
 
 .PHONY: release
 release: $(GEMS)
+	git tag v$(VERSION)
 	for gem in $^; do gem push $$gem; done
 
 pkg/%-$(VERSION).gem: %.gemspec $(VERSION_FILE) | pkg
