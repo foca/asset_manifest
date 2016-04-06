@@ -5,6 +5,7 @@ module AssetManifest
     def initialize(manifest, asset_options = {})
       @manifest = manifest
       @asset_options = asset_options
+      @minify = asset_options.delete(:minify) { nil }
     end
 
     # Public: Generate a <link> tag.
@@ -32,7 +33,7 @@ module AssetManifest
     # Returns a String.
     def stylesheet_tag(path, html: {}, **opts)
       html.update(rel: "stylesheet")
-      link_tag(path, html: html, **opts)
+      link_tag(path, html: html, **opts.merge(minify: @minify))
     end
 
     # Public: Generate a <script> tag to a JS file.
@@ -44,7 +45,7 @@ module AssetManifest
     #
     # Returns a String.
     def script_tag(path, html: {}, **opts)
-      script = asset(path, opts)
+      script = asset(path, opts.merge(minify: @minify))
       attrs = attributes(html)
       attrs.concat(sri(script))
       %Q(<script src="#{script.url}" #{attrs.join(" ")}></script>)
