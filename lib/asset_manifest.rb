@@ -123,9 +123,13 @@ module AssetManifest
                          cors: "anonymous")
       minify = (minify if minify) # Ensure `false` gets converted to `nil`
       @path = base_path(path, minify)
-      @manifest = manifest[@path]
-      @integrity = integrity || @manifest.fetch("integrity")
-      @checksum = checksum || @manifest.fetch("checksum")
+      @manifest = manifest.fetch(@path, {})
+      @integrity = integrity || @manifest.fetch("integrity") do
+        fail KeyError, "No integrity information for `#{path}` in the manifest"
+      end
+      @checksum = checksum || @manifest.fetch("checksum") do
+        fail KeyError, "No checksum information for `#{path}` in the manifest"
+      end
       @minify = minify
       @host = host
       @cors = cors if cors?

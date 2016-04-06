@@ -28,6 +28,15 @@ scope "plain asset with a manifest" do
   end
 end
 
+scope "Missing asset from the manifest" do
+  test "includes asset path in the exception" do |manifest|
+    error = assert_raise KeyError do
+      AssetManifest::Asset.new("/no/file", manifest: manifest)
+    end
+    assert error.message =~ %r|/no/file|, "No asset path in the error message"
+  end
+end
+
 scope "Minified assets" do
   test "includes '.min' in the URL when it should minify" do |manifest|
     asset = AssetManifest::Asset.new(
